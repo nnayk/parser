@@ -1,5 +1,6 @@
 import nltk
 import sys
+import re
 
 TERMINALS = """
 Adj -> "country" | "dreadful" | "enigmatical" | "little" | "moist" | "red"
@@ -14,8 +15,22 @@ V -> "arrived" | "came" | "chuckled" | "had" | "lit" | "said" | "sat"
 V -> "smiled" | "tell" | "were"
 """
 
+# The NONTERMINALS global variable should be replaced with a set of context-free grammar rules
+# that, when combined with the rules in TERMINALS, allow the parsing of all sentences in the sentences/ directory.
+# Each rules must be on its own line. Each rule must include the -> characters to denote which symbol is
+# being replaced, and may optionally include | symbols if there are multiple ways to rewrite a symbol.
+# You do not need to keep the existing rule S -> N V in your solution, but your first rule must begin with
+# S -> since S (representing a sentence) is the starting symbol.
+# You may add as many nonterminal symbols as you would like.
+# Use the nonterminal symbol NP to represent a “noun phrase”, such as the subject of a sentence.
+
 NONTERMINALS = """
-S -> N V
+S -> NP VP
+CP -> S Conj S
+AP -> A | A AP
+PP -> P NP
+NP -> N | D NP | AP NP | NP PP | N Adv
+VP -> V | V NP | V NP PP | V Adv | V PP
 """
 
 grammar = nltk.CFG.fromstring(NONTERMINALS + TERMINALS)
@@ -34,6 +49,7 @@ def main():
 
     # Convert input into list of words
     s = preprocess(s)
+    print(f"s={s}")
 
     # Attempt to parse sentence
     try:
@@ -49,9 +65,9 @@ def main():
     for tree in trees:
         tree.pretty_print()
 
-        print("Noun Phrase Chunks")
-        for np in np_chunk(tree):
-            print(" ".join(np.flatten()))
+        # print("Noun Phrase Chunks")
+        # for np in np_chunk(tree):
+        #     print(" ".join(np.flatten()))
 
 
 def preprocess(sentence):
