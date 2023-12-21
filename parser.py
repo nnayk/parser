@@ -24,13 +24,18 @@ V -> "smiled" | "tell" | "were"
 # You may add as many nonterminal symbols as you would like.
 # Use the nonterminal symbol NP to represent a “noun phrase”, such as the subject of a sentence.
 
+# NONTERMINALS = """
+# S -> NP VP
+# NP -> N | Det N
+# VP -> V | V NP
+# """
+
 NONTERMINALS = """
-S -> NP VP
-CP -> S Conj S
-AP -> A | A AP
+S -> NP VP | S Conj S | VP
+AP -> Adj | Adj AP
 PP -> P NP
-NP -> N | D NP | AP NP | NP PP | N Adv
-VP -> V | V NP | V NP PP | V Adv | V PP
+NP -> N | Det NP | AP NP | NP Adv | NP PP
+VP -> V | V NP | V PP | V Adv
 """
 
 grammar = nltk.CFG.fromstring(NONTERMINALS + TERMINALS)
