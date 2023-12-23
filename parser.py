@@ -15,21 +15,6 @@ V -> "arrived" | "came" | "chuckled" | "had" | "lit" | "said" | "sat"
 V -> "smiled" | "tell" | "were"
 """
 
-# The NONTERMINALS global variable should be replaced with a set of context-free grammar rules
-# that, when combined with the rules in TERMINALS, allow the parsing of all sentences in the sentences/ directory.
-# Each rules must be on its own line. Each rule must include the -> characters to denote which symbol is
-# being replaced, and may optionally include | symbols if there are multiple ways to rewrite a symbol.
-# You do not need to keep the existing rule S -> N V in your solution, but your first rule must begin with
-# S -> since S (representing a sentence) is the starting symbol.
-# You may add as many nonterminal symbols as you would like.
-# Use the nonterminal symbol NP to represent a “noun phrase”, such as the subject of a sentence.
-
-# NONTERMINALS = """
-# S -> NP VP
-# NP -> N | Det N
-# VP -> V | V NP
-# """
-
 NONTERMINALS = """
 S -> NP VP | S Conj S | VP
 AP -> Adj | Adj AP
@@ -70,9 +55,9 @@ def main():
     for tree in trees:
         tree.pretty_print()
 
-        # print("Noun Phrase Chunks")
-        # for np in np_chunk(tree):
-        #     print(" ".join(np.flatten()))
+        print("Noun Phrase Chunks")
+        for np in np_chunk(tree):
+            print(" ".join(np.flatten()))
 
 
 def preprocess(sentence):
@@ -96,7 +81,11 @@ def np_chunk(tree):
     whose label is "NP" that does not itself contain any other
     noun phrases as subtrees.
     """
-    raise NotImplementedError
+    res = []
+    for s in tree.subtrees(lambda t: t.label() == "NP"):
+        if not any(s.subtrees(lambda t: t.label() == "NP" and t != s)):
+            res.append(s)
+    return res
 
 
 if __name__ == "__main__":
